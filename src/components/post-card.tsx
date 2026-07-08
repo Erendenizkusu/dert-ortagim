@@ -11,6 +11,7 @@ import { StatusPill } from "@/components/status-pill";
 import { MeTooButton } from "@/components/me-too-button";
 import { SensitiveGate } from "@/components/sensitive-gate";
 import { TagList } from "@/components/tag-list";
+import { ReportButton } from "@/components/report-button";
 
 export function PostCard({
   post,
@@ -74,11 +75,14 @@ export function PostCard({
           <MessagesSquare className="h-4 w-4" />
           {post.advice_count > 0 ? `${post.advice_count} tavsiye` : "Tavsiye ver"}
         </Link>
-        <StatusPill
-          status={post.status}
-          adviceCount={post.advice_count}
-          className="ml-auto"
-        />
+        <div className="ml-auto flex items-center gap-1">
+          <StatusPill status={post.status} adviceCount={post.advice_count} />
+          <ReportButton
+            targetType="post"
+            targetId={post.id}
+            isMine={post.is_mine}
+          />
+        </div>
       </div>
     </article>
   );

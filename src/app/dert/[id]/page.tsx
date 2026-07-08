@@ -13,6 +13,8 @@ import { TagList } from "@/components/tag-list";
 import { AdviceCard } from "@/components/advice-card";
 import { AdviceForm } from "@/components/advice-form";
 import { EmptyState } from "@/components/empty-state";
+import { ReportButton } from "@/components/report-button";
+import { SupportStrip } from "@/components/support-strip";
 import { deletePost } from "./actions";
 
 type Params = Promise<{ id: string }>;
@@ -60,7 +62,7 @@ export default async function DertPage({ params }: { params: Params }) {
                 {kategori.emoji} {kategori.label}
               </Badge>
             )}
-            {post.is_mine && (
+            {post.is_mine ? (
               <form action={deletePost.bind(null, post.id)}>
                 <button
                   type="submit"
@@ -70,6 +72,8 @@ export default async function DertPage({ params }: { params: Params }) {
                   <Trash2 className="h-4 w-4" />
                 </button>
               </form>
+            ) : (
+              <ReportButton targetType="post" targetId={post.id} />
             )}
           </div>
         </div>
@@ -83,6 +87,8 @@ export default async function DertPage({ params }: { params: Params }) {
             </p>
           </SensitiveGate>
         </div>
+
+        {post.is_sensitive && <SupportStrip className="mt-4" />}
 
         {post.tags?.length > 0 && (
           <div className="mt-4">

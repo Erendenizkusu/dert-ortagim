@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PenLine, Search, HeartHandshake } from "lucide-react";
+import { PenLine, Search, HeartHandshake, ShieldCheck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "@/lib/auth-actions";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -30,6 +30,16 @@ export async function SiteHeader() {
 
         {user ? (
           <div className="flex items-center gap-2">
+            {user.profile?.role === "moderator" && (
+              <Link
+                href="/moderasyon"
+                aria-label="Moderasyon"
+                title="Moderasyon"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-muted-foreground transition hover:text-primary hover:border-primary/50"
+              >
+                <ShieldCheck className="h-4 w-4" />
+              </Link>
+            )}
             <Button asChild size="sm" className="gap-1.5">
               <Link href="/yeni">
                 <PenLine className="h-4 w-4" />

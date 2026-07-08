@@ -5,6 +5,35 @@
 
 export type PostStatus = "open" | "solved";
 
+export type UserRole = "user" | "moderator";
+
+export type ReportReason =
+  | "spam"
+  | "taciz"
+  | "siddet"
+  | "cinsel"
+  | "kendine_zarar"
+  | "alakasiz"
+  | "diger";
+
+export type ReportTargetType = "post" | "advice";
+
+/** mod_list_reports() RPC'sinin döndürdüğü zenginleştirilmiş rapor satırı. */
+export type ModReport = {
+  id: string;
+  target_type: ReportTargetType;
+  target_id: string;
+  reason: ReportReason;
+  note: string | null;
+  created_at: string;
+  title: string;
+  body: string;
+  is_hidden: boolean;
+  category: string | null;
+  link_id: string;
+  report_count: number;
+};
+
 /** posts_public / advices_public view'larının döndürdüğü maskeli satırlar.
  *  NOT: `type` (object literal) olmalı; `interface` `Record<string, unknown>`'a
  *  atanamadığı için Supabase `GenericSchema` kısıtını bozar. */
@@ -55,6 +84,7 @@ export interface Database {
           display_name: string;
           bio: string | null;
           avatar_url: string | null;
+          role: UserRole;
           created_at: string;
         };
         Insert: {
@@ -63,6 +93,7 @@ export interface Database {
           display_name: string;
           bio?: string | null;
           avatar_url?: string | null;
+          role?: UserRole;
           created_at?: string;
         };
         Update: {
@@ -87,6 +118,9 @@ export interface Database {
           solved_advice_id: string | null;
           me_too_count: number;
           advice_count: number;
+          is_hidden: boolean;
+          hidden_at: string | null;
+          hidden_reason: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -122,6 +156,9 @@ export interface Database {
           is_anonymous: boolean;
           body: string;
           is_helpful: boolean;
+          is_hidden: boolean;
+          hidden_at: string | null;
+          hidden_reason: string | null;
           created_at: string;
         };
         Insert: {
@@ -152,6 +189,31 @@ export interface Database {
         Update: Record<string, never>;
         Relationships: [];
       };
+      reports: {
+        Row: {
+          id: string;
+          reporter_id: string;
+          target_type: ReportTargetType;
+          target_id: string;
+          reason: ReportReason;
+          note: string | null;
+          status: "open" | "reviewed" | "dismissed" | "actioned";
+          created_at: string;
+          resolved_at: string | null;
+          resolved_by: string | null;
+        };
+        Insert: {
+          reporter_id: string;
+          target_type: ReportTargetType;
+          target_id: string;
+          reason: ReportReason;
+          note?: string | null;
+        };
+        Update: {
+          status?: "open" | "reviewed" | "dismissed" | "actioned";
+        };
+        Relationships: [];
+      };
     };
     Views: {
       posts_public: {
@@ -166,6 +228,27 @@ export interface Database {
     Functions: {
       cozum_toggle: {
         Args: { p_post_id: string; p_advice_id: string };
+        Returns: undefined;
+      };
+      is_moderator: {
+        Args: { uid: string };
+        Returns: boolean;
+      };
+      submit_report: {
+        Args: {
+          p_target_type: ReportTargetType;
+          p_target_id: string;
+          p_reason: ReportReason;
+          p_note?: string | null;
+        };
+        Returns: undefined;
+      };
+      mod_list_reports: {
+        Args: Record<string, never>;
+        Returns: ModReport[];
+      };
+      mod_action: {
+        Args: { p_report_id: string; p_action: "hide" | "unhide" | "dismiss" };
         Returns: undefined;
       };
     };

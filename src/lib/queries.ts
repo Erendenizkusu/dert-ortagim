@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { PostPublic, AdvicePublic } from "@/lib/database.types";
+import type { PostPublic, AdvicePublic, ModReport } from "@/lib/database.types";
 
 const POST_COLS =
   "id,title,body,category,tags,is_sensitive,status,solved_advice_id,me_too_count,advice_count,created_at,updated_at,is_anonymous,author_id,author_username,author_display_name,author_avatar_url,is_mine" as const;
@@ -103,6 +103,14 @@ export async function searchPosts({
     .order("created_at", { ascending: false })
     .limit(50);
   return data ?? [];
+}
+
+/** Moderasyon paneli: açık raporlar (yalnız moderatör; RPC içinde yetki kontrolü var). */
+export async function getOpenReports(): Promise<ModReport[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("mod_list_reports");
+  if (error) throw error;
+  return (data as ModReport[] | null) ?? [];
 }
 
 /** Profil paneli: kullanıcının kendi dertleri ve tavsiyeleri + istatistik. */

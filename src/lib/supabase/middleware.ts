@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Giriş gerektiren rotalar
-  const korumali = ["/yeni", "/profil"];
+  const korumali = ["/yeni", "/profil", "/moderasyon"];
   const path = request.nextUrl.pathname;
   if (!user && korumali.some((p) => path.startsWith(p))) {
     const url = request.nextUrl.clone();
