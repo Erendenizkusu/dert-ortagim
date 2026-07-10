@@ -1,6 +1,11 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { PostPublic, AdvicePublic, ModReport } from "@/lib/database.types";
+import type {
+  PostPublic,
+  AdvicePublic,
+  ModReport,
+  ModStats,
+} from "@/lib/database.types";
 
 const POST_COLS =
   "id,title,body,category,tags,is_sensitive,status,solved_advice_id,me_too_count,advice_count,created_at,updated_at,is_anonymous,author_id,author_username,author_display_name,author_avatar_url,is_mine" as const;
@@ -111,6 +116,51 @@ export async function getOpenReports(): Promise<ModReport[]> {
   const { data, error } = await supabase.rpc("mod_list_reports");
   if (error) throw error;
   return (data as ModReport[] | null) ?? [];
+}
+
+/** Moderatör istatistikleri (yalnız moderatör; RPC içinde yetki kontrolü var).
+ *  RPC henüz yoksa (migration uygulanmadıysa) panel sessizce gizlenir. */
+export async function getModStats(): Promise<ModStats | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("mod_stats");
+  if (error) return null;
+  return (data as ModStats | null) ?? null;
+}
+
+/**
+ * Herkese açık profil: yalnız kişinin ANONİM OLMAYAN dert ve tavsiyeleri döner.
+ * Anonim paylaşımlar _public view'larında author_username = null olduğundan
+ * bu filtreye asla takılmaz -> anonimlik korunur.
+ */
+export async function getPublicProfile(username: string) {
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username,display_name,bio,created_at")
+    .eq("username", username)
+    .maybeSingle();
+  if (!profile) return null;
+
+  const [posts, advices] = await Promise.all([
+    supabase
+      .from("posts_public")
+      .select(POST_COLS)
+      .eq("author_username", username)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("advices_public")
+      .select(ADVICE_COLS)
+      .eq("author_username", username)
+      .order("created_at", { ascending: false })
+      .limit(50),
+  ]);
+
+  return {
+    profile,
+    posts: posts.data ?? [],
+    advices: advices.data ?? [],
+  };
 }
 
 /** Profil paneli: kullanıcının kendi dertleri ve tavsiyeleri + istatistik. */

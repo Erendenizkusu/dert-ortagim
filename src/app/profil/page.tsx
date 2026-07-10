@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { HeartHandshake, Sparkles, Inbox } from "lucide-react";
+import { HeartHandshake, Sparkles, Inbox, Pencil, ExternalLink } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { getProfileData, getMyMeTooSet } from "@/lib/queries";
 import { signOut } from "@/lib/auth-actions";
@@ -38,18 +38,39 @@ export default async function ProfilPage({ searchParams }: { searchParams: SP })
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold">{ad}</h1>
             {user.profile?.username && (
-              <p className="text-sm text-muted-foreground">@{user.profile.username}</p>
+              <Link
+                href={`/u/${user.profile.username}`}
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-foreground"
+              >
+                @{user.profile.username}
+                <ExternalLink className="h-3 w-3" />
+              </Link>
             )}
           </div>
-          <form action={signOut} className="ml-auto">
-            <button
-              type="submit"
-              className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+          <div className="ml-auto flex flex-col items-end gap-2">
+            <Link
+              href="/profil/duzenle"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
             >
-              Çıkış yap
-            </button>
-          </form>
+              <Pencil className="h-3.5 w-3.5" />
+              Düzenle
+            </Link>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Çıkış yap
+              </button>
+            </form>
+          </div>
         </div>
+
+        {user.profile?.bio && (
+          <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
+            {user.profile.bio}
+          </p>
+        )}
 
         {/* "Kaç kişiye dert ortağı oldun?" */}
         <div className="mt-4 grid grid-cols-3 gap-2">

@@ -18,6 +18,24 @@ export type ReportReason =
 
 export type ReportTargetType = "post" | "advice";
 
+/** mod_stats() RPC'sinin döndürdüğü topluluk sağlık metrikleri (ham sayılar). */
+export type ModStats = {
+  users_total: number;
+  users_new_7d: number;
+  posts_total: number;
+  posts_today: number;
+  advices_total: number;
+  advices_today: number;
+  open_posts: number;
+  solved_posts: number;
+  unanswered_total: number;
+  unanswered_over_24h: number;
+  avg_hours_to_first_advice: number | null;
+  reports_open: number;
+  reports_total: number;
+  hidden_total: number;
+};
+
 /** mod_list_reports() RPC'sinin döndürdüğü zenginleştirilmiş rapor satırı. */
 export type ModReport = {
   id: string;
@@ -85,6 +103,7 @@ export interface Database {
           bio: string | null;
           avatar_url: string | null;
           role: UserRole;
+          username_changed_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -250,6 +269,10 @@ export interface Database {
       mod_action: {
         Args: { p_report_id: string; p_action: "hide" | "unhide" | "dismiss" };
         Returns: undefined;
+      };
+      mod_stats: {
+        Args: Record<string, never>;
+        Returns: ModStats;
       };
     };
     Enums: Record<string, never>;

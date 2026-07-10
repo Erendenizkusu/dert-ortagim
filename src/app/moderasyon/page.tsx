@@ -9,9 +9,10 @@ import {
   Inbox,
 } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
-import { getOpenReports } from "@/lib/queries";
+import { getOpenReports, getModStats } from "@/lib/queries";
 import { RAPOR_SEBEP_LABEL } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
+import { ModStatsPanel } from "@/components/mod-stats-panel";
 import { moderate } from "./actions";
 
 export const metadata = { title: "Moderasyon" };
@@ -21,7 +22,10 @@ export default async function ModerasyonPage() {
   // proxy giriş şartını sağlar; rol kontrolü burada.
   if (!user || user.profile?.role !== "moderator") notFound();
 
-  const reports = await getOpenReports();
+  const [reports, stats] = await Promise.all([
+    getOpenReports(),
+    getModStats(),
+  ]);
 
   return (
     <div className="space-y-5">
@@ -38,6 +42,8 @@ export default async function ModerasyonPage() {
           </p>
         </div>
       </header>
+
+      {stats && <ModStatsPanel stats={stats} />}
 
       {reports.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card/40 py-12 text-center">

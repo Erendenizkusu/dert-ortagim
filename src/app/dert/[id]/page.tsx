@@ -54,6 +54,7 @@ export default async function DertPage({ params }: { params: Params }) {
           <AuthorLine
             isAnonymous={post.is_anonymous}
             displayName={post.author_display_name}
+            username={post.author_username}
             createdAt={post.created_at}
           />
           <div className="flex shrink-0 items-center gap-2">

@@ -34,6 +34,7 @@ export function PostCard({
         <AuthorLine
           isAnonymous={post.is_anonymous}
           displayName={post.author_display_name}
+          username={post.author_username}
           createdAt={post.created_at}
         />
         {kategori && (

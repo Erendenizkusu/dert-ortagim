@@ -35,6 +35,7 @@ export function AdviceCard({
       <AuthorLine
         isAnonymous={advice.is_anonymous}
         displayName={advice.author_display_name}
+        username={advice.author_username}
         createdAt={advice.created_at}
       />
 
