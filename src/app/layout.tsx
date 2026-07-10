@@ -16,14 +16,25 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 
+const description =
+  "Dertlerini paylaş, yalnız olmadığını hisset. Aynı yolu yürümüş insanlardan tavsiye al.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "dert ortağım",
-    template: "%s · dert ortağım",
+    default: "dertdaş",
+    template: "%s · dertdaş",
   },
-  description:
-    "Dertlerini paylaş, yalnız olmadığını hisset. Aynı yolu yürümüş insanlardan tavsiye al.",
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "dertdaş",
+    locale: "tr_TR",
+    url: siteUrl,
+    title: "dertdaş",
+    description,
+  },
+  twitter: { card: "summary_large_image", title: "dertdaş", description },
 };
 
 export default function RootLayout({

@@ -1,4 +1,4 @@
-# dert ortağım
+# dertdaş
 
 İnsanların dertlerini (anonim ya da kullanıcı adıyla) paylaştığı, aynı yolu yürümüş
 başkalarının tavsiye/çözüm bıraktığı, empati odaklı bir dayanışma platformu.

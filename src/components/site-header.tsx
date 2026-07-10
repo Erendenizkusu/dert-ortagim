@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { PenLine, Search, HeartHandshake, ShieldCheck } from "lucide-react";
+import { PenLine, Search, ShieldCheck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "@/lib/auth-actions";
+import { BrandMark } from "@/components/brand-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 
@@ -13,9 +14,11 @@ export async function SiteHeader() {
       <div className="mx-auto flex h-14 w-full max-w-2xl items-center gap-2 px-4">
         <Link href="/" className="mr-auto flex items-center gap-2 font-semibold">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-            <HeartHandshake className="h-4.5 w-4.5" />
+            <BrandMark className="h-5 w-5" />
           </span>
-          <span className="text-[15px] tracking-tight">dert ortağım</span>
+          <span className="text-[15px] tracking-tight">
+            dert<span className="text-primary">daş</span>
+          </span>
         </Link>
 
         <Link
